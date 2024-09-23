@@ -11,6 +11,8 @@ pip install anycaptcha
 
 anycaptcha is a unified Python API for CAPTCHA solving services.
 
+Special thanks to [unicaps](https://github.com/sergey-scat/unicaps) lib
+
 ## Key Features
 - A unified Python interface that is independent of the service used
 - Uses native service protocol/endpoints (eg, no needs in patching _hosts_ file)

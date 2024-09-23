@@ -21,14 +21,8 @@ class StandardHTTPTransport(BaseTransport):
         self.settings.setdefault('max_retries', HTTP_RETRY_MAX_COUNT)
         self.settings.setdefault('handle_http_errors', True)
 
-        default_headers = {
-            'User-Agent': f'python-yaac'
-        }
+        default_headers = {'User-Agent': f'python-anycaptcha'}
 
-        self.session = httpx.Client(
-            headers=default_headers,
-            timeout=httpx.Timeout(timeout=30)
-        )
         self.session_async = httpx.AsyncClient(
             headers=default_headers,
             timeout=httpx.Timeout(timeout=30)

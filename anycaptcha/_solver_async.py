@@ -10,29 +10,29 @@ from .captcha import (
     GeeTestV4, CapyPuzzle
 )
 from ._captcha.base import BaseCaptcha  # type: ignore
-from ._service.base import AsyncSolvedCaptcha, AsyncCaptchaTask
-from ._service import CaptchaSolvingService, SOLVING_SERVICE
+from ._service.base import SolvedCaptcha, AsyncCaptchaTask
+from ._service import Service, SOLVING_SERVICE
 
 
-class AsyncCaptchaSolver:
+class Solver:
     """Main captcha solver :class:`AsyncCaptchaSolver <AsyncCaptchaSolver>` object.
 
     :param service_name: captcha solving service to use (enum CaptchaSolvingService or str).
     :param api_key: API key to access the solving service.
     """
 
-    def __init__(self, service_name: Union[CaptchaSolvingService, str], api_key: str):
+    def __init__(self, service_name: Union[Service, str], api_key: str):
         # check service_name
-        if isinstance(service_name, CaptchaSolvingService):
+        if isinstance(service_name, Service):
             self.service_name = service_name
         elif isinstance(service_name, str):
             try:
-                self.service_name = CaptchaSolvingService(service_name)
+                self.service_name = Service(service_name)
             except ValueError as exc:
                 raise ValueError(
                     f"'{service_name}' is not a valid CaptchaSolvingService. "
                     "Please use one of the following values: " + ', '.join(
-                        [f"'{i.value}'" for i in CaptchaSolvingService]
+                        [f"'{i.value}'" for i in Service]
                     )
                 ) from exc
         else:
@@ -58,7 +58,7 @@ class AsyncCaptchaSolver:
     async def solve_image_captcha(self,  # type: ignore
                                   image: Union[bytes, io.RawIOBase, io.BufferedIOBase,
                                                pathlib.Path],
-                                  **kwargs) -> AsyncSolvedCaptcha:  # type: ignore
+                                  **kwargs) -> SolvedCaptcha:  # type: ignore
         r"""Solves image CAPTCHA.
 
         :param image: binary file, bytes or pathlib.Path object containing image with CAPTCHA
@@ -77,7 +77,7 @@ class AsyncCaptchaSolver:
 
         return await self._solve_captcha_async(ImageCaptcha, image, **kwargs)
 
-    async def solve_text_captcha(self, text: str, **kwargs) -> AsyncSolvedCaptcha:  # type: ignore
+    async def solve_text_captcha(self, text: str, **kwargs) -> SolvedCaptcha:  # type: ignore
         r"""Solves text CAPTCHA.
 
         :param text: String with text captcha task.
@@ -89,7 +89,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(TextCaptcha, text, **kwargs)
 
     async def solve_recaptcha_v2(self, site_key: str, page_url: str,  # type: ignore
-                                 **kwargs) -> AsyncSolvedCaptcha:
+                                 **kwargs) -> SolvedCaptcha:
         r"""Solves reCAPTCHA v2.
 
         :param site_key: Value of "data-sitekey" (or "k") parameter.
@@ -107,7 +107,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(RecaptchaV2, site_key, page_url, **kwargs)
 
     async def solve_recaptcha_v3(self, site_key: str, page_url: str,  # type: ignore
-                                 **kwargs) -> AsyncSolvedCaptcha:
+                                 **kwargs) -> SolvedCaptcha:
         r"""Solves reCAPTCHA v3.
 
         :param site_key: Value of "render" parameter.
@@ -125,7 +125,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(RecaptchaV3, site_key, page_url, **kwargs)
 
     async def solve_hcaptcha(self, site_key: str, page_url: str,  # type: ignore
-                             **kwargs) -> AsyncSolvedCaptcha:
+                             **kwargs) -> SolvedCaptcha:
         r"""Solves hCaptcha.
 
         :param site_key: hCaptcha website key.
@@ -141,7 +141,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(HCaptcha, site_key, page_url, **kwargs)
 
     async def solve_funcaptcha(self, public_key: str, page_url: str,  # type: ignore
-                               **kwargs) -> AsyncSolvedCaptcha:
+                               **kwargs) -> SolvedCaptcha:
         r"""Solves FunCaptcha.
 
         :param public_key: FunCaptcha public key.
@@ -158,7 +158,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(FunCaptcha, public_key, page_url, **kwargs)
 
     async def solve_keycaptcha(self, page_url: str, user_id: str, session_id: str,   # type: ignore
-                               ws_sign: str, ws_sign2: str, **kwargs) -> AsyncSolvedCaptcha:
+                               ws_sign: str, ws_sign2: str, **kwargs) -> SolvedCaptcha:
         r"""Solves KeyCaptcha.
 
         :param page_url: Full URL of the page with CAPTCHA.
@@ -174,7 +174,7 @@ class AsyncCaptchaSolver:
         )
 
     async def solve_geetest(self, page_url: str, gt_key: str, challenge: str,  # type: ignore
-                            **kwargs) -> AsyncSolvedCaptcha:
+                            **kwargs) -> SolvedCaptcha:
         r"""Solves GeeTest.
 
         :param page_url: Full URL of the page with CAPTCHA.
@@ -187,7 +187,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(GeeTest, page_url, gt_key, challenge, **kwargs)
 
     async def solve_geetest_v4(self, page_url: str, captcha_id: str,  # type: ignore
-                               **kwargs) -> AsyncSolvedCaptcha:
+                               **kwargs) -> SolvedCaptcha:
         r"""Solves GeeTestV4.
 
         :param page_url: Full URL of the page with CAPTCHA.
@@ -198,7 +198,7 @@ class AsyncCaptchaSolver:
         return await self._solve_captcha_async(GeeTestV4, page_url, captcha_id, **kwargs)
 
     async def solve_capy_puzzle(self, site_key: str, page_url: str,  # type: ignore
-                                **kwargs) -> AsyncSolvedCaptcha:
+                                **kwargs) -> SolvedCaptcha:
         r"""Solves Capy.
 
         :param site_key: Public website key (static).

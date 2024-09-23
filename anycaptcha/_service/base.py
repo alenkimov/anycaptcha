@@ -15,7 +15,7 @@ from better_proxy import Proxy
 from .._transport.http_transport import StandardHTTPTransport
 from .._captcha import CaptchaType
 from .._captcha.base import BaseCaptcha, BaseCaptchaSolution
-from ..errors import YaacException, SolutionWaitTimeout, SolutionNotReadyYet
+from ..errors import AnyCaptchaException, SolutionWaitTimeout, SolutionNotReadyYet
 
 
 class BaseService(ABC):
@@ -38,7 +38,7 @@ class BaseService(ABC):
     async def _make_request_async(self, request_class, *args):
         request_class = request_class + "Request"
         if not hasattr(self._module, request_class):
-            raise YaacException(f"{request_class} is not supported by the current service!")
+            raise AnyCaptchaException(f"{request_class} is not supported by the current service!")
 
         request = getattr(self._module, request_class)(self)
         return await self._transport.make_request_async(request, *args)
@@ -61,7 +61,7 @@ class BaseService(ABC):
 
     async def solve_captcha_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
                                   user_agent: Optional[str] = None,
-                                  cookies: Optional[Dict[str, str]] = None) -> 'AsyncSolvedCaptcha':
+                                  cookies: Optional[Dict[str, str]] = None) -> 'SolvedCaptcha':
         """ Solves captcha and returns SolvedCaptcha object (async) """
 
         start_time = datetime.now()
@@ -69,8 +69,8 @@ class BaseService(ABC):
         solution, cost, extra = await self.wait_for_solution_async(task)
         end_time = datetime.now()
 
-        return AsyncSolvedCaptcha(task, solution, start_time, end_time,
-                                  cost=cost, extra=extra)
+        return SolvedCaptcha(task, solution, start_time, end_time,
+                             cost=cost, extra=extra)
 
     async def create_task_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
                                 user_agent: Optional[str] = None,
@@ -80,7 +80,7 @@ class BaseService(ABC):
         captcha_type = captcha.get_type()
 
         if captcha_type not in self.supported_captchas:
-            raise YaacException(f"{captcha_type} is not supported by the current service!")
+            raise AnyCaptchaException(f"{captcha_type} is not supported by the current service!")
 
         if proxy:
             proxy = Proxy.from_str(proxy)
@@ -144,7 +144,7 @@ class BaseService(ABC):
         result = False
         try:
             result = await self._make_request_async("ReportGood", solved_captcha)
-        except YaacException:
+        except AnyCaptchaException:
             if raise_exc:
                 raise
         return bool(result)
@@ -156,7 +156,7 @@ class BaseService(ABC):
         result = False
         try:
             result = await self._make_request_async("ReportBad", solved_captcha)
-        except YaacException:
+        except AnyCaptchaException:
             if raise_exc:
                 raise
         return bool(result)
@@ -247,7 +247,7 @@ class SolvedCaptcha:
                  end_time: datetime, cost: Optional[float] = None, cookies: Optional[dict] = None,
                  extra: dict = None):
         if not task.is_done():
-            raise YaacException("CAPTCHA is not solved yet!")
+            raise AnyCaptchaException("CAPTCHA is not solved yet!")
 
         self._task = task
         self._solution = solution
@@ -296,20 +296,6 @@ class SolvedCaptcha:
     def extra(self) -> dict:
         """ Extra data from the service """
         return self._extra
-
-    def report_good(self, raise_exc: bool = False) -> bool:
-        """ Report good CAPTCHA """
-        # pylint: disable=protected-access
-        return self._task._service.report_good(self, raise_exc=raise_exc)
-
-    def report_bad(self, raise_exc: bool = False) -> bool:
-        """ Report bad CAPTCHA """
-        # pylint: disable=protected-access
-        return self._task._service.report_bad(self, raise_exc=raise_exc)
-
-
-class AsyncSolvedCaptcha(SolvedCaptcha):
-    """ Solved CAPTCHA object (async) """
 
     async def report_good(self, raise_exc: bool = False) -> bool:  # type: ignore
         """ Report good CAPTCHA """

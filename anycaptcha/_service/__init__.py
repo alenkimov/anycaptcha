@@ -10,8 +10,8 @@ from . import (
 )
 
 
-class CaptchaSolvingService(enum.Enum):
-    """ CAPTCHA solving service enumeration """
+class Service(enum.Enum):
+    """CAPTCHA solving service enum"""
 
     ANTI_CAPTCHA   = "anti-captcha.com"
     AZCAPTCHA      = "azcaptcha.com"
@@ -24,11 +24,11 @@ class CaptchaSolvingService(enum.Enum):
 
 # supported CAPTCHA solving services
 SOLVING_SERVICE = {
-    CaptchaSolvingService.ANTI_CAPTCHA: anti_captcha,
-    CaptchaSolvingService.AZCAPTCHA: azcaptcha,
-    CaptchaSolvingService.CAPTCHA_GURU: captcha_guru,
-    CaptchaSolvingService.CPTCH_NET: cptch_net,
-    CaptchaSolvingService.DEATHBYCAPTCHA: deathbycaptcha,
-    CaptchaSolvingService.RUCAPTCHA: rucaptcha,
-    CaptchaSolvingService.TWOCAPTCHA: twocaptcha
+    Service.ANTI_CAPTCHA: anti_captcha,
+    Service.AZCAPTCHA: azcaptcha,
+    Service.CAPTCHA_GURU: captcha_guru,
+    Service.CPTCH_NET: cptch_net,
+    Service.DEATHBYCAPTCHA: deathbycaptcha,
+    Service.RUCAPTCHA: rucaptcha,
+    Service.TWOCAPTCHA: twocaptcha
 }

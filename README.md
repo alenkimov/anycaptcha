@@ -18,7 +18,7 @@ anycaptcha is a unified Python API for CAPTCHA solving services.
 - Supports 10 types of CAPTCHAs
 - Supports 6 CAPTCHA solving services
 - Written Pythonic way and is intended for humans
-- Поддерживает прокси в любом формате благодаря [better-proxy](https://github.com/alenkimov/better_proxy)
+- Supports proxies in any format thanks to [better-proxy](https://github.com/alenkimov/better_proxy)
 
 ## Example
 ```python

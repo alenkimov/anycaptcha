@@ -59,7 +59,7 @@ class BaseService(ABC):
 
         return self._settings
 
-    async def solve_captcha_async(self, captcha: BaseCaptcha, proxy: Optional[Proxy] = None,
+    async def solve_captcha_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
                                   user_agent: Optional[str] = None,
                                   cookies: Optional[Dict[str, str]] = None) -> 'AsyncSolvedCaptcha':
         """ Solves captcha and returns SolvedCaptcha object (async) """
@@ -72,7 +72,7 @@ class BaseService(ABC):
         return AsyncSolvedCaptcha(task, solution, start_time, end_time,
                                   cost=cost, extra=extra)
 
-    async def create_task_async(self, captcha: BaseCaptcha, proxy: Optional[Proxy] = None,
+    async def create_task_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
                                 user_agent: Optional[str] = None,
                                 cookies: Optional[Dict[str, str]] = None) -> 'AsyncCaptchaTask':
         """ Creates CAPTCHA solving task (async) """
@@ -81,6 +81,9 @@ class BaseService(ABC):
 
         if captcha_type not in self.supported_captchas:
             raise YaacException(f"{captcha_type} is not supported by the current service!")
+
+        if proxy:
+            proxy = Proxy.from_str(proxy)
 
         result = await self._make_request_async(
             f"{captcha_type.value}Task", captcha, proxy, user_agent, cookies

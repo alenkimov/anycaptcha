@@ -85,22 +85,22 @@ class Request(HTTPRequestJSON):
         error_msg = f"{status}: {error_text}"
 
         if error_text in ('token authentication disabled', 'not-logged-in', 'banned'):
-            raise exceptions.AccessDeniedError(error_msg)
+            raise errors.AccessDeniedError(error_msg)
         if error_text in ('insufficient-funds',):
-            raise exceptions.LowBalanceError(error_msg)
+            raise errors.LowBalanceError(error_msg)
         if error_text in ('service-overload',):
-            raise exceptions.ServiceTooBusy(error_msg)
+            raise errors.ServiceTooBusy(error_msg)
         if error_text in ('upload-failed', 'invalid-captcha'):
-            raise exceptions.MalformedRequestError(error_msg)
+            raise errors.MalformedRequestError(error_msg)
         if error_text in ('ERROR_PAGEURL', 'Invalid base64-encoded CAPTCHA',
                           'Not a (CAPTCHA) image', 'Empty CAPTCHA image', 'ERROR_GOOGLEKEY',
                           'ERROR_PAGEURL', 'ERROR_PUBLICKEY', 'ERROR_SITEKEY', 'ERROR_ACTION',
                           'ERROR_MIN_SCORE', 'ERROR_MIN_SCORE_NOT_FLOAT'):
-            raise exceptions.BadInputDataError(error_msg)
+            raise errors.BadInputDataError(error_msg)
         if error_text in ('ERROR_PROXYTYPE', 'ERROR_PROXY'):
-            raise exceptions.ProxyError(error_msg)
+            raise errors.ProxyError(error_msg)
 
-        raise exceptions.ServiceError(error_msg)
+        raise errors.ServiceError(error_msg)
 
 
 class PostRequest(Request):
@@ -147,7 +147,7 @@ class GetStatusRequest(GetRequest):
             if response_data.get('is_service_overloaded'):
                 return {}
             return response_data
-        except exceptions.YaacException:
+        except errors.AnyCaptchaException:
             return {}
 
 
@@ -157,7 +157,7 @@ class ReportGoodRequest(PostRequest):
     # pylint: disable=arguments-differ
     def prepare(self, solved_captcha) -> dict:  # type: ignore
         """ Prepares request """
-        raise exceptions.YaacException(
+        raise errors.AnyCaptchaException(
             "Report for good CAPTCHA is not supported by the current service!"
         )
 
@@ -198,7 +198,7 @@ class TaskRequest(PostRequest):
 
         # raise the BadInputDataError if CAPTCHA is not correct
         if not response_data.pop('is_correct'):
-            raise exceptions.BadInputDataError('is_correct=false')
+            raise errors.BadInputDataError('is_correct=false')
 
         if 'text' in response_data:
             response_data.pop('text')
@@ -224,7 +224,7 @@ class SolutionRequest(GetRequest):
 
         # raise the UnableToSolveError if CAPTCHA is not correct
         if not response_data.pop('is_correct'):
-            raise exceptions.UnableToSolveError('is_correct=false')
+            raise errors.UnableToSolveError('is_correct=false')
 
         # the empty text field means that solving is in progress
         text = response_data.pop("text")

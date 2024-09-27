@@ -61,7 +61,7 @@ class Request(HTTPRequestJSON):
             raise errors.SolutionNotReadyYet()
         elif error_code in ('ERROR_WRONG_USER_KEY', 'ERROR_KEY_DOES_NOT_EXIST',
                             'ERROR_IP_NOT_ALLOWED', 'IP_BANNED'):
-            raise exceptions.AccessDeniedError(error_msg)
+            raise errors.AccessDeniedError(error_msg)
         elif error_code in ('ERROR_ZERO_BALANCE',):
             raise errors.LowBalanceError(error_msg)
         elif error_code in ('ERROR_NO_SLOT_AVAILABLE',):
@@ -161,7 +161,7 @@ class GetStatusRequest(GetBalanceRequest):
 
         try:
             return super().parse_response(response)
-        except errors.YaacException:
+        except errors.AnyCaptchaException:
             return {}
 
 

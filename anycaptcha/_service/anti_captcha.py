@@ -114,14 +114,14 @@ class Request(HTTPRequestJSON):
         elif error_code in ('ERROR_CAPTCHAIMAGE_BLOCKED', 'ERROR_CAPTCHA_UNSOLVABLE',
                             'ERROR_BAD_DUPLICATES', 'ERROR_RECAPTCHA_TIMEOUT',
                             'ERROR_FAILED_LOADING_WIDGET'):
-            raise exceptions.UnableToSolveError(error_msg)
+            raise errors.UnableToSolveError(error_msg)
         elif error_code in ('ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT',
                             'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED',
                             'ERROR_PROXY_TRANSPARENT', 'ERROR_PROXY_HAS_NO_IMAGE_SUPPORT',
                             'ERROR_PROXY_INCOMPATIBLE_HTTP_VERSION', 'ERROR_PROXY_NOT_AUTHORISED'):
             raise errors.ProxyError(error_msg)
 
-        raise exceptions.ServiceError(error_msg)
+        raise errors.ServiceError(error_msg)
 
 
 class GetBalanceRequest(Request):
@@ -149,7 +149,7 @@ class GetStatusRequest(GetBalanceRequest):
 
         try:
             return super().parse_response(response)
-        except errors.YaacException:
+        except errors.AnyCaptchaException:
             return {}
 
 
@@ -160,7 +160,7 @@ class ReportGoodRequest(Request):
     def prepare(self, solved_captcha) -> dict:  # type: ignore
         """ Prepares request """
 
-        raise exceptions.YaacException(
+        raise errors.AnyCaptchaException(
             "Report for good CAPTCHA is not supported by the current service!"
         )
 
@@ -181,7 +181,7 @@ class ReportBadRequest(Request):
         elif captcha_type in (CaptchaType.RECAPTCHAV2, CaptchaType.RECAPTCHAV3):
             uri = "/reportIncorrectRecaptcha"
         else:
-            raise exceptions.YaacException(
+            raise errors.AnyCaptchaException(
                 f"Report for bad {captcha_type.value} is not supported!"
             )
 
@@ -267,7 +267,7 @@ class SolutionRequest(Request):
         response_data = super().parse_response(response)
 
         if response_data["status"] != "ready":
-            raise exceptions.SolutionNotReadyYet()
+            raise errors.SolutionNotReadyYet()
 
         solution_data = response_data["solution"]
         solution_class = self.source_data['task'].captcha.get_solution_class()

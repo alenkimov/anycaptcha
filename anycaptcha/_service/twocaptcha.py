@@ -68,14 +68,14 @@ class Request(HTTPRequestJSON):
             raise errors.SolutionNotReadyYet()
         elif error_code in ('ERROR_WRONG_USER_KEY', 'ERROR_KEY_DOES_NOT_EXIST',
                             'ERROR_IP_NOT_ALLOWED', 'IP_BANNED'):
-            raise exceptions.AccessDeniedError(error_msg)
+            raise errors.AccessDeniedError(error_msg)
         elif error_code in ('ERROR_ZERO_BALANCE',):
-            raise exceptions.LowBalanceError(error_msg)
+            raise errors.LowBalanceError(error_msg)
         elif error_code in ('ERROR_NO_SLOT_AVAILABLE',):
             # If server returns ERROR_NO_SLOT_AVAILABLE make a 5 seconds timeout before sending
             # next request.
             # time.sleep(5)
-            raise exceptions.ServiceTooBusy(error_msg)
+            raise errors.ServiceTooBusy(error_msg)
         elif error_code in ('MAX_USER_TURN',) or error_code.startswith('ERROR:'):
             raise errors.TooManyRequestsError(error_msg)
         elif error_code in ('ERROR_WRONG_ID_FORMAT', 'ERROR_WRONG_CAPTCHA_ID'):
@@ -88,7 +88,7 @@ class Request(HTTPRequestJSON):
             raise errors.BadInputDataError(error_msg)
         elif error_code in ('ERROR_CAPTCHAIMAGE_BLOCKED', 'ERROR_CAPTCHA_UNSOLVABLE',
                             'ERROR_BAD_DUPLICATES'):
-            raise exceptions.UnableToSolveError(error_msg)
+            raise errors.UnableToSolveError(error_msg)
         elif error_code in ('ERROR_BAD_PROXY', 'ERROR_PROXY_CONNECTION_FAILED'):
             raise errors.ProxyError(error_msg)
 
@@ -160,7 +160,7 @@ class GetStatusRequest(GetBalanceRequest):
 
         try:
             return super().parse_response(response)
-        except errors.YaacException:
+        except errors.AnyCaptchaException:
             return {}
 
 

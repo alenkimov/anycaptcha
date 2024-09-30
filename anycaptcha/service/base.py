@@ -1,7 +1,3 @@
-"""
-Base service stuff
-"""
-
 import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -13,13 +9,15 @@ from typing import Dict, Optional, Tuple
 from better_proxy import Proxy
 
 from .._transport.http_transport import StandardHTTPTransport
-from .._captcha import CaptchaType
-from .._captcha.base import BaseCaptcha, BaseCaptchaSolution
+from ..captcha import CaptchaType
+from ..captcha.base import BaseCaptcha, BaseCaptchaSolution
 from ..errors import AnyCaptchaException, SolutionWaitTimeout, SolutionNotReadyYet
 
 
 class BaseService(ABC):
     """ Base class for all services """
+
+    CURRENCY = "USD"
 
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -59,22 +57,22 @@ class BaseService(ABC):
 
         return self._settings
 
-    async def solve_captcha_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
-                                  user_agent: Optional[str] = None,
-                                  cookies: Optional[Dict[str, str]] = None) -> 'SolvedCaptcha':
+    async def solve_captcha(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
+                            user_agent: Optional[str] = None,
+                            cookies: Optional[Dict[str, str]] = None) -> 'SolvedCaptcha':
         """ Solves captcha and returns SolvedCaptcha object (async) """
 
         start_time = datetime.now()
-        task = await self.create_task_async(captcha, proxy, user_agent, cookies)
-        solution, cost, extra = await self.wait_for_solution_async(task)
+        task = await self.create_task(captcha, proxy, user_agent, cookies)
+        solution, cost, extra = await self.wait_for_solution(task)
         end_time = datetime.now()
 
         return SolvedCaptcha(task, solution, start_time, end_time,
-                             cost=cost, extra=extra)
+                             cost=cost, extra=extra, currency=self.CURRENCY)
 
-    async def create_task_async(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
-                                user_agent: Optional[str] = None,
-                                cookies: Optional[Dict[str, str]] = None) -> 'AsyncCaptchaTask':
+    async def create_task(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
+                          user_agent: Optional[str] = None,
+                          cookies: Optional[Dict[str, str]] = None) -> 'CaptchaTask':
         """ Creates CAPTCHA solving task (async) """
 
         captcha_type = captcha.get_type()
@@ -90,9 +88,9 @@ class BaseService(ABC):
         )
         task_id = str(result["task_id"])
 
-        return AsyncCaptchaTask(self, captcha, task_id, result.get("extra"))
+        return CaptchaTask(self, captcha, task_id, result.get("extra"))
 
-    async def get_task_result_async(self, task: 'CaptchaTask') -> Tuple[BaseCaptchaSolution,
+    async def get_task_result(self, task: 'CaptchaTask') -> Tuple[BaseCaptchaSolution,
                                                                         Optional[float], Dict]:
         """ Returns CAPTCHA solution """
 
@@ -104,7 +102,7 @@ class BaseService(ABC):
             result.get("extra") or {}
         )
 
-    async def wait_for_solution_async(self, task) -> Tuple[BaseCaptchaSolution,
+    async def wait_for_solution(self, task) -> Tuple[BaseCaptchaSolution,
                                                            Optional[float], Dict]:
         """ Wait for CAPTCHA solution """
 
@@ -123,7 +121,7 @@ class BaseService(ABC):
             except SolutionNotReadyYet:
                 await asyncio.sleep(settings.polling_interval)
 
-    async def get_balance_async(self):
+    async def get_balance(self):
         """ Get account balance """
 
         response = await self._make_request_async("GetBalance")
@@ -132,13 +130,13 @@ class BaseService(ABC):
             balance = float(balance)
         return balance
 
-    async def get_status_async(self) -> bool:
+    async def get_status(self) -> bool:
         """ Get service status """
 
         return bool(await self._make_request_async("GetStatus"))
 
-    async def report_good_async(self, solved_captcha: 'SolvedCaptcha',
-                                raise_exc: bool = False) -> bool:
+    async def report_good(self, solved_captcha: 'SolvedCaptcha',
+                          raise_exc: bool = False) -> bool:
         """ Report good CAPTCHA """
 
         result = False
@@ -149,8 +147,8 @@ class BaseService(ABC):
                 raise
         return bool(result)
 
-    async def report_bad_async(self, solved_captcha: 'SolvedCaptcha',
-                               raise_exc: bool = False) -> bool:
+    async def report_bad(self, solved_captcha: 'SolvedCaptcha',
+                         raise_exc: bool = False) -> bool:
         """ Report bad CAPTCHA """
 
         result = False
@@ -211,33 +209,19 @@ class CaptchaTask:
         """ Task extra data """
         return self._extra
 
-    def get_result(self) -> Optional[BaseCaptchaSolution]:
-        """ Gets solution """
-        if self._result is None:
-            self._result = self._service.get_task_result(self)
-        return self._result
-
     def is_done(self) -> bool:
         """ Checks if solution is ready """
         return bool(self._result)
 
-    def wait(self) -> BaseCaptchaSolution:
-        """ Waits for solution """
-        return self._service.wait_for_solution(self)
-
-
-class AsyncCaptchaTask(CaptchaTask):
-    """ Task for CAPTCHA solving """
-
     async def get_result(self) -> Optional[BaseCaptchaSolution]:  # type: ignore
         """ Gets solution """
         if self._result is None:
-            self._result = await self._service.get_task_result_async(self)
+            self._result = await self._service.get_task_result(self)
         return self._result
 
     async def wait(self) -> BaseCaptchaSolution:  # type: ignore
         """ Waits for solution """
-        return await self._service.wait_for_solution_async(self)
+        return await self._service.wait_for_solution(self)
 
 
 class SolvedCaptcha:
@@ -245,7 +229,7 @@ class SolvedCaptcha:
 
     def __init__(self, task: CaptchaTask, solution: BaseCaptchaSolution, start_time: datetime,
                  end_time: datetime, cost: Optional[float] = None, cookies: Optional[dict] = None,
-                 extra: dict = None):
+                 extra: dict = None, currency: str = "USD"):
         if not task.is_done():
             raise AnyCaptchaException("CAPTCHA is not solved yet!")
 
@@ -254,6 +238,7 @@ class SolvedCaptcha:
         self._start_time = start_time
         self._end_time = end_time
         self._cost = cost
+        self._currency = currency
         self._cookies = cookies or {}
         self._extra = extra or {}
 
@@ -293,6 +278,10 @@ class SolvedCaptcha:
         return self._cost
 
     @property
+    def currency(self) -> str:
+        return self._currency
+
+    @property
     def cookies(self) -> dict:
         """ Cookies """
         return self._cookies
@@ -305,9 +294,9 @@ class SolvedCaptcha:
     async def report_good(self, raise_exc: bool = False) -> bool:  # type: ignore
         """ Report good CAPTCHA """
         # pylint: disable=protected-access
-        return await self._task._service.report_good_async(self, raise_exc=raise_exc)
+        return await self.task._service.report_good(self, raise_exc=raise_exc)
 
     async def report_bad(self, raise_exc: bool = False) -> bool:  # type: ignore
         """ Report bad CAPTCHA """
         # pylint: disable=protected-access
-        return await self._task._service.report_bad_async(self, raise_exc=raise_exc)
+        return await self.task._service.report_bad(self, raise_exc=raise_exc)

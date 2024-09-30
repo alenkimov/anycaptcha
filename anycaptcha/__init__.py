@@ -2,8 +2,8 @@
 All captcha solving services in one lib
 """
 
-from ._solver_async import Solver
-from ._service import Service
+from .solver import Solver
+from .service import Service
 from .enums import CaptchaAlphabet
 from .enums import CaptchaCharType
 from .enums import WorkerLanguage

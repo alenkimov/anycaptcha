@@ -1,7 +1,3 @@
-"""
-Base transport stuff
-"""
-
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 

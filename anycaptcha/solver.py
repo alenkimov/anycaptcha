@@ -9,9 +9,9 @@ from .captcha import (
     ImageCaptcha, TextCaptcha, RecaptchaV2, RecaptchaV3, HCaptcha, FunCaptcha, KeyCaptcha, GeeTest,
     GeeTestV4, CapyPuzzle
 )
-from ._captcha.base import BaseCaptcha  # type: ignore
-from ._service.base import SolvedCaptcha, AsyncCaptchaTask
-from ._service import Service, SOLVING_SERVICE
+from .captcha.base import BaseCaptcha
+from .service.base import SolvedCaptcha, CaptchaTask
+from .service import Service, SOLVING_SERVICE
 
 
 class Solver:
@@ -48,7 +48,7 @@ class Solver:
         user_agent = kwargs.pop('user_agent') if 'user_agent' in kwargs else None
         cookies = kwargs.pop('cookies') if 'cookies' in kwargs else None
 
-        return await self._service.solve_captcha_async(
+        return await self._service.solve_captcha(
             captcha_class(*args, **kwargs),
             proxy=proxy,
             user_agent=user_agent,
@@ -212,14 +212,14 @@ class Solver:
         """
         return await self._solve_captcha_async(CapyPuzzle, site_key, page_url, **kwargs)
 
-    async def create_task(self, captcha: BaseCaptcha) -> AsyncCaptchaTask:  # type: ignore
+    async def create_task(self, captcha: BaseCaptcha) -> CaptchaTask:  # type: ignore
         """Create task to solve CAPTCHA
 
         :param captcha: Captcha to solve.
         :return: :class:`AsyncCaptchaTask <AsyncCaptchaTask>` object
         :rtype: unicaps.AsyncCaptchaTask
         """
-        return await self._service.create_task_async(captcha)
+        return await self._service.create_task(captcha)
 
     async def get_balance(self) -> float:  # type: ignore
         """Get account balance
@@ -227,7 +227,7 @@ class Solver:
         :return: :float:Balance amount
         :rtype: float
         """
-        return await self._service.get_balance_async()
+        return await self._service.get_balance()
 
     async def get_status(self) -> bool:  # type: ignore
         """Get service status
@@ -235,7 +235,7 @@ class Solver:
         :return: :bool:Service status
         :rtype: bool
         """
-        return await self._service.get_status_async()
+        return await self._service.get_status()
 
     async def close(self) -> None:  # type: ignore
         """Close all connections"""

@@ -8,7 +8,7 @@ from better_proxy import Proxy
 from .base import HTTPService
 from .._transport.http_transport import HTTPRequestJSON  # type: ignore
 from .. import errors
-from .._captcha import CaptchaType
+from ..captcha import CaptchaType
 
 __all__ = [
     'Service', 'GetBalanceRequest', 'GetStatusRequest',

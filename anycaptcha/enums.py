@@ -1,6 +1,5 @@
 import enum
 
-
 class CaptchaAlphabet(enum.Enum):
     """ Alphabet used in the CAPTCHA """
 

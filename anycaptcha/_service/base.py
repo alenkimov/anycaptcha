@@ -5,7 +5,7 @@ Base service stuff
 import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from inspect import getmodule
 from timeit import default_timer as timer
 from typing import Dict, Optional, Tuple
@@ -281,6 +281,11 @@ class SolvedCaptcha:
     def end_time(self) -> datetime:
         """ End solving at """
         return self._end_time
+
+    @property
+    def solving_duration(self) -> timedelta:
+        """ Time taken to solve the CAPTCHA """
+        return self._end_time - self._start_time
 
     @property
     def cost(self) -> Optional[float]:

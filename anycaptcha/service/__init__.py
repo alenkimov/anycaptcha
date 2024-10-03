@@ -21,7 +21,7 @@ class Service(enum.Enum):
     DEATHBYCAPTCHA = "deathbycaptcha.com"
     RUCAPTCHA      = "rucaptcha.com"
     TWOCAPTCHA     = "2captcha.com"
-    MULTIBOT_CAPTCHA  = "multibot.in/"
+    MULTIBOT_CAPTCHA  = "multibot.in"
 
 
 # supported CAPTCHA solving services

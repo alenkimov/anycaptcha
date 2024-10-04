@@ -7,6 +7,7 @@ from . import (
     deathbycaptcha,
     rucaptcha,
     twocaptcha,
+    multibot_captcha
 )
 
 
@@ -20,6 +21,7 @@ class Service(enum.Enum):
     DEATHBYCAPTCHA = "deathbycaptcha.com"
     RUCAPTCHA      = "rucaptcha.com"
     TWOCAPTCHA     = "2captcha.com"
+    MULTIBOT_CAPTCHA  = "multibot.in"
 
 
 # supported CAPTCHA solving services
@@ -30,5 +32,6 @@ SOLVING_SERVICE = {
     Service.CPTCH_NET: cptch_net,
     Service.DEATHBYCAPTCHA: deathbycaptcha,
     Service.RUCAPTCHA: rucaptcha,
-    Service.TWOCAPTCHA: twocaptcha
+    Service.TWOCAPTCHA: twocaptcha,
+    Service.MULTIBOT_CAPTCHA: multibot_captcha
 }

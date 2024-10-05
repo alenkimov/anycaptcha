@@ -27,7 +27,7 @@ __all__ = [
 class Service(Service2Captcha):
     """ Main service class for cap.guru """
 
-    BASE_URL = 'http://api.cap.guru'
+    BASE_URL = 'https://api4.cap.guru'
 
 
 def _decorator(cls):

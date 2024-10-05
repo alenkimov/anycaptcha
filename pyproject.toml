@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "anycaptcha"
-version = "1.3.0"
+version = "1.4.0"
 description = "All captcha solving services in one lib"
 authors = ["Alen <alen.kimov@gmail.com>"]
 readme = "README.md"

@@ -8,7 +8,8 @@ from . import (
     rucaptcha,
     twocaptcha,
     multibot_captcha,
-    sctg_captcha
+    sctg_captcha,
+    capmonster
 )
 
 
@@ -24,6 +25,7 @@ class Service(enum.Enum):
     TWOCAPTCHA          = "2captcha.com"
     MULTIBOT_CAPTCHA    = "multibot.in"
     SCTG_CAPTCHA        = "api.sctg.xyz"
+    CAPMONSTER          = "capmonster.cloud"
 
 
 # supported CAPTCHA solving services
@@ -36,5 +38,6 @@ SOLVING_SERVICE = {
     Service.RUCAPTCHA: rucaptcha,
     Service.TWOCAPTCHA: twocaptcha,
     Service.MULTIBOT_CAPTCHA: multibot_captcha,
-    Service.SCTG_CAPTCHA: sctg_captcha
+    Service.SCTG_CAPTCHA: sctg_captcha,
+    Service.CAPMONSTER: capmonster
 }

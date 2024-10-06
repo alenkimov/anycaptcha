@@ -27,6 +27,9 @@ class Service(enum.Enum):
     SCTG_CAPTCHA        = "api.sctg.xyz"
     CAPMONSTER          = "capmonster.cloud"
 
+    def __str__(self):
+        return self.value
+
 
 # supported CAPTCHA solving services
 SOLVING_SERVICE = {

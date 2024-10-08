@@ -29,6 +29,9 @@ class Service(enum.Enum):
     CAPMONSTER          = "capmonster.cloud"
     CAPSOLVER           = "capsolver.com"
 
+    def __str__(self):
+        return self.value
+
 
 # supported CAPTCHA solving services
 SOLVING_SERVICE = {

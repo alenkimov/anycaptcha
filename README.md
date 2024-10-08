@@ -18,9 +18,19 @@ Special thanks to [unicaps](https://github.com/sergey-scat/unicaps) lib
 - Uses native service protocol/endpoints (eg, no needs in patching _hosts_ file)
 - Modern asynchronous client
 - Supports 10 types of CAPTCHAs
-- Supports 6 CAPTCHA solving services
 - Written Pythonic way and is intended for humans
 - Supports proxies in any format thanks to [better-proxy](https://github.com/alenkimov/better_proxy)
+
+Supports 9 CAPTCHA solving services:
+- [2captcha.com](http://2captcha.com/?from=12016127)	                     
+- [rucaptcha.com](https://rucaptcha.com?from=12016127)                       
+- [anti-captcha.com](https://getcaptchasolution.com/tmb2cervod)              
+- [azcaptcha.com](https://azcaptcha.com)                                     
+- [cap.guru](https://cap.guru/ru)                                            
+- [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b)
+- [capsolver.com](https://dashboard.capsolver.com/passport/register?inviteCode=m-aE3NeBGZLU)
+- [capmonster.cloud](https://capmonster.cloud)
+- [multibot.in](https://multibot.in)
 
 ## Example
 ```python

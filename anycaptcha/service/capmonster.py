@@ -152,12 +152,12 @@ class RecaptchaV2TaskRequest(CreateTaskRequest):
         if proxy:
             task.update({
                 "proxyType": proxy.protocol.lower(),
-                "proxyAddress": proxy.ip,
+                "proxyAddress": proxy.host,
                 "proxyPort": proxy.port
             })
-            if proxy.username and proxy.password:
+            if proxy.login and proxy.password:
                 task.update({
-                    "proxyLogin": proxy.username,
+                    "proxyLogin": proxy.login,
                     "proxyPassword": proxy.password
                 })
 

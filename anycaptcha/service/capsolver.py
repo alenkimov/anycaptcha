@@ -19,7 +19,7 @@ __all__ = [
 class Service(HTTPService):
     """ Main service class for CapMonster """
 
-    BASE_URL = 'https://api.capmonster.cloud'
+    BASE_URL = 'https://api.capsolver.com'
 
     def _post_init(self):
         """ Initialize settings """
@@ -35,7 +35,7 @@ class Service(HTTPService):
                 self.settings[captcha_type].polling_delay = 5
 
 
-class CapMonsterRequest(HTTPRequestJSON):
+class CapSolverRequest(HTTPRequestJSON):
     """ Common Request class for CapMonster """
 
     def parse_response(self, response) -> dict:
@@ -64,7 +64,7 @@ class CapMonsterRequest(HTTPRequestJSON):
                 raise errors.ServiceError(error_msg)
 
 
-class CreateTaskRequest(CapMonsterRequest):
+class CreateTaskRequest(CapSolverRequest):
     """ CreateTask Request class """
 
     def prepare(self, task_data: dict) -> dict:
@@ -73,10 +73,12 @@ class CreateTaskRequest(CapMonsterRequest):
             "clientKey": self._service.api_key,
             "task": task_data
         }
+
         return {
             "method": "POST",
             "url": f"{self._service.BASE_URL}/createTask",
-            "json": request_payload
+            "json": request_payload,
+            "headers": {'Content-Type': 'application/json', 'host': 'api.capsolver.com'}
         }
 
     def parse_response(self, response) -> dict:
@@ -87,7 +89,7 @@ class CreateTaskRequest(CapMonsterRequest):
         }
 
 
-class GetBalanceRequest(CapMonsterRequest):
+class GetBalanceRequest(CapSolverRequest):
     """ GetBalance Request class """
 
     def prepare(self) -> dict:
@@ -118,26 +120,19 @@ class RecaptchaV2TaskRequest(CreateTaskRequest):
             "type": "RecaptchaV2TaskProxyless" if proxy is None else "RecaptchaV2Task",
             "websiteURL": captcha.page_url,
             "websiteKey": captcha.site_key,
-            "isInvisible": int(captcha.is_invisible) if hasattr(captcha, 'is_invisible') else 0
+            "isInvisible": hasattr(captcha, 'is_invisible')
         }
 
         if proxy:
             task.update({
-                "proxyType": proxy.protocol.lower(),
-                "proxyAddress": proxy.host,
-                "proxyPort": proxy.port
+                "proxy": proxy.as_url.split("://")[1]
             })
-            if proxy.login and proxy.password:
-                task.update({
-                    "proxyLogin": proxy.login,
-                    "proxyPassword": proxy.password
-                })
 
         if user_agent:
             task["userAgent"] = user_agent
 
-        if cookies:
-            task["cookies"] = ';'.join([f"{k}={v}" for k, v in cookies.items()])
+        # if cookies:
+        #     task["cookies"] = ';'.join([f"{k}={v}" for k, v in cookies.items()])
 
         # Handle optional recaptchaDataSValue if present
         if hasattr(captcha, 'recaptcha_data_s_value') and captcha.recaptcha_data_s_value:
@@ -146,7 +141,7 @@ class RecaptchaV2TaskRequest(CreateTaskRequest):
         return super().prepare(task_data=task)
 
 
-class GetTaskResultRequest(CapMonsterRequest):
+class GetTaskResultRequest(CapSolverRequest):
     """ GetTaskResult Request class for CapMonster """
 
     def prepare(self, task: 'CaptchaTask') -> dict:

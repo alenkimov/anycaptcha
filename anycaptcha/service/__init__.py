@@ -9,7 +9,8 @@ from . import (
     twocaptcha,
     multibot_captcha,
     sctg_captcha,
-    capmonster
+    capmonster,
+    capsolver
 )
 
 
@@ -26,6 +27,7 @@ class Service(enum.Enum):
     MULTIBOT_CAPTCHA    = "multibot.in"
     SCTG_CAPTCHA        = "api.sctg.xyz"
     CAPMONSTER          = "capmonster.cloud"
+    CAPSOLVER           = "capsolver.com"
 
     def __str__(self):
         return self.value
@@ -42,5 +44,6 @@ SOLVING_SERVICE = {
     Service.TWOCAPTCHA: twocaptcha,
     Service.MULTIBOT_CAPTCHA: multibot_captcha,
     Service.SCTG_CAPTCHA: sctg_captcha,
-    Service.CAPMONSTER: capmonster
+    Service.CAPMONSTER: capmonster,
+    Service.CAPSOLVER: capsolver
 }

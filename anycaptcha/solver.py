@@ -239,7 +239,7 @@ class Solver:
 
     async def close(self) -> None:  # type: ignore
         """Close all connections"""
-        await self._service.close_async()
+        await self._service.close()
 
     async def __aenter__(self):
         return self

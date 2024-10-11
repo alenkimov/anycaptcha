@@ -5,7 +5,7 @@ cptch.net service
 from better_proxy import Proxy
 
 from .base import HTTPService
-from .._transport.http_transport import HTTPRequestJSON  # type: ignore
+from ..transport import HTTPRequestJSON  # type: ignore
 from .. import errors
 from ..captcha import CaptchaType
 from ..enums import CaptchaAlphabet

@@ -1,5 +1,4 @@
 import asyncio
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from inspect import getmodule
@@ -8,13 +7,13 @@ from typing import Dict, Optional, Tuple
 
 from better_proxy import Proxy
 
-from .._transport.http_transport import StandardHTTPTransport
+from ..transport import StandardHTTPTransport  # type: ignore
 from ..captcha import CaptchaType
 from ..captcha.base import BaseCaptcha, BaseCaptchaSolution
 from ..errors import AnyCaptchaException, SolutionWaitTimeout, SolutionNotReadyYet
 
 
-class BaseService(ABC):
+class HTTPService:
     """ Base class for all services """
 
     CURRENCY = "USD"
@@ -26,9 +25,8 @@ class BaseService(ABC):
         self._settings = {captcha_type: Settings() for captcha_type in self.supported_captchas}
         self._post_init()
 
-    @abstractmethod
     def _init_transport(self):
-        pass
+        return StandardHTTPTransport()
 
     def _post_init(self):
         pass
@@ -39,7 +37,7 @@ class BaseService(ABC):
             raise AnyCaptchaException(f"{request_class} is not supported by the current service!")
 
         request = getattr(self._module, request_class)(self)
-        return await self._transport.make_request_async(request, *args)
+        return await self._transport.make_request(request, *args)
 
     @property
     def supported_captchas(self) -> Tuple[CaptchaType, ...]:
@@ -159,20 +157,9 @@ class BaseService(ABC):
                 raise
         return bool(result)
 
-    @abstractmethod
-    async def close_async(self):
+    async def close(self):
         """ Close connections (async) """
-
-
-class HTTPService(BaseService):
-    """ Standard HTTP Service """
-
-    def _init_transport(self):
-        return StandardHTTPTransport()
-
-    async def close_async(self):
-        """ Close connections (async) """
-        await self._transport.close_async()
+        await self._transport.close()
 
 
 @dataclass

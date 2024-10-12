@@ -118,7 +118,8 @@ class Request(HTTPRequestJSON):
         elif error_code in ('ERROR_PROXY_CONNECT_REFUSED', 'ERROR_PROXY_CONNECT_TIMEOUT',
                             'ERROR_PROXY_READ_TIMEOUT', 'ERROR_PROXY_BANNED',
                             'ERROR_PROXY_TRANSPARENT', 'ERROR_PROXY_HAS_NO_IMAGE_SUPPORT',
-                            'ERROR_PROXY_INCOMPATIBLE_HTTP_VERSION', 'ERROR_PROXY_NOT_AUTHORISED'):
+                            'ERROR_PROXY_INCOMPATIBLE_HTTP_VERSION', 'ERROR_PROXY_NOT_AUTHORISED',
+                            'ERROR_PROXY_TOO_SLOW'):
             raise errors.ProxyError(error_msg)
 
         raise errors.ServiceError(error_msg)

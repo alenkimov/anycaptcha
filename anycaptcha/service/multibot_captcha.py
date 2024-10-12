@@ -1,5 +1,6 @@
 """
-azcaptcha.com service
+multibot.in service
+https://multibot.in/ru/api/
 """
 from better_proxy import Proxy
 
@@ -18,7 +19,8 @@ __all__ = [
 class Service(HTTPService):
     """ Main service class for 2captcha """
 
-    BASE_URL = 'https://multibot.in/'
+    BASE_URL = 'https://multibot.in'
+    CURRENCY = "CAPTCHAS"
 
     def _post_init(self):
         """ Init settings """
@@ -43,7 +45,7 @@ class Request(HTTPRequestJSON):
 
         response_data = super().parse_response(response)
 
-        if response_data.pop("status") == 1:
+        if response_data:
             return response_data
 
         ###############
@@ -55,33 +57,31 @@ class Request(HTTPRequestJSON):
 
         if error_code == 'CAPCHA_NOT_READY':  # pylint: disable=no-else-raise
             raise errors.SolutionNotReadyYet()
-        elif error_code in ('ERROR_WRONG_USER_KEY', 'ERROR_KEY_DOES_NOT_EXIST',
-                            'ERROR_IP_NOT_ALLOWED', 'IP_BANNED'):
+        elif error_code in ('ERROR_WRONG_USER_KEY', ):
             raise errors.AccessDeniedError(error_msg)
-        elif error_code in ('ERROR_ZERO_BALANCE',):
+        elif error_code in ():
             raise errors.LowBalanceError(error_msg)
-        elif error_code in ('ERROR_NO_SLOT_AVAILABLE',):
+        elif error_code in ('ERROR_ZERO_BALANCE',):
             # If server returns ERROR_NO_SLOT_AVAILABLE make a 5 seconds timeout before sending
             # next request.
             # time.sleep(5)
             raise errors.ServiceTooBusy(error_msg)
         elif error_code in ('MAX_USER_TURN',) or error_code.startswith('ERROR:'):
             raise errors.TooManyRequestsError(error_msg)
-        elif error_code in ('ERROR_WRONG_ID_FORMAT', 'ERROR_WRONG_CAPTCHA_ID'):
+        elif error_code in ('ERROR_WRONG_ID_FORMAT',
+                            'SITEKEY_IS_INCORRECT'):
             raise errors.MalformedRequestError(error_msg)
-        elif error_code in ('ERROR_ZERO_CAPTCHA_FILESIZE', 'ERROR_TOO_BIG_CAPTCHA_FILESIZE',
-                            'ERROR_WRONG_FILE_EXTENSION', 'ERROR_IMAGE_TYPE_NOT_SUPPORTED',
-                            'ERROR_UPLOAD', 'ERROR_PAGEURL', 'ERROR_BAD_TOKEN_OR_PAGEURL',
-                            'ERROR_GOOGLEKEY', 'ERROR_BAD_PARAMETERS', 'ERROR_TOKEN_EXPIRED',
-                            'ERROR_EMPTY_ACTION'):
+        elif error_code in ('ERROR_METHOD_DOES_NOT_EXIST', 'WRONG_METHOD',
+                            'WRONG_COUNT_IMG', 'ERROR_WRONG_CAPTCHA_ID',
+                            'WRONG_REQUESTS_LINK', 'WRONG_LOAD_PAGEURL'):
             raise errors.BadInputDataError(error_msg)
-        elif error_code in ('ERROR_CAPTCHAIMAGE_BLOCKED', 'ERROR_CAPTCHA_UNSOLVABLE',
-                            'ERROR_BAD_DUPLICATES'):
+        elif error_code in ('ERROR_BAD_DATA', 'WRONG_CAPTCHA_ID',
+                            'HCAPTCHA_NOT_FOUND', 'TURNSTILE_NOT_FOUND'):
             raise errors.UnableToSolveError(error_msg)
         elif error_code in ('ERROR_BAD_PROXY', 'ERROR_PROXY_CONNECTION_FAILED'):
             raise errors.ProxyError(error_msg)
 
-        raise errors.ServiceError(error_msg)
+        raise errors.ServiceError(error_msg)  # WRONG_RESULT
 
 
 class InRequest(Request):
@@ -122,7 +122,7 @@ class ResRequest(Request):
                 url=self._service.BASE_URL + "/res.php",
                 params=dict(
                     key=self._service.api_key,
-                    json=1
+                    # json=1
                 )
             )
         )
@@ -141,13 +141,13 @@ class GetBalanceRequest(ResRequest):
         """ Prepare request """
 
         request = super().prepare()
-        request["params"].update(dict(action="getbalance"))
+        request["params"].update(dict(action="userinfo"))
         return request
 
     def parse_response(self, response) -> dict:
         """ Parse response and return balance """
 
-        return {'balance': float(super().parse_response(response)["request"])}
+        return {'balance': int(super().parse_response(response)["balance"])}
 
 
 class GetStatusRequest(GetBalanceRequest):
@@ -211,16 +211,15 @@ class TaskRequest(InRequest):
         if proxy:
             request['data'].update(
                 dict(
-                    proxy=proxy.as_url,
-                    proxytype=proxy.protocol.upper()
+                    proxy=f"{proxy.login}:{proxy.password}@{proxy.host}:{proxy.port}",
                 )
             )
 
         if cookies:
             request['data']['cookies'] = ';'.join([f'{k}:{v}' for k, v in cookies.items()])
 
-        if user_agent:
-            request['data']['userAgent'] = user_agent
+        # if user_agent:
+        #     request['data']['userAgent'] = user_agent
 
         return request
 
@@ -282,7 +281,7 @@ class RecaptchaV2TaskRequest(TaskRequest):
                 method="userrecaptcha",
                 googlekey=captcha.site_key,
                 pageurl=captcha.page_url,
-                invisible=int(captcha.is_invisible)
+                # invisible=int(captcha.is_invisible)
             )
         )
 

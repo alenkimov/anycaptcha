@@ -1,8 +1,6 @@
 import enum
-import importlib
-from abc import ABC
-from dataclasses import asdict, dataclass, fields, MISSING
-from typing import Dict
+
+from pydantic import BaseModel
 
 
 class CaptchaType(enum.Enum):
@@ -20,21 +18,11 @@ class CaptchaType(enum.Enum):
     CAPY = "CapyPuzzle"
 
 
-@dataclass
-class BaseCaptcha(ABC):
+class BaseCaptcha(BaseModel):
     """ Base class for any CAPTCHA """
 
-    @classmethod
-    def get_type(cls) -> CaptchaType:
-        """ Return CaptchaType """
-
-        return CaptchaType(cls.__name__)
-
-    @classmethod
-    def get_solution_class(cls) -> 'BaseCaptchaSolution':
-        """ Return appropriate solution class """
-
-        return getattr(importlib.import_module(cls.__module__), cls.__name__ + "Solution")
+    get_type: CaptchaType
+    get_solution_class: 'BaseCaptchaSolution'
 
     def get_optional_data(self, **kwargs) -> Dict:
         """
@@ -64,28 +52,11 @@ class BaseCaptcha(ABC):
         return result
 
 
-@dataclass
-class BaseCaptchaSolution(ABC):
+class BaseCaptchaSolution(BaseModel):
     """ Base class for any CAPTCHA solution """
-
-    @classmethod
-    def get_type(cls) -> CaptchaType:
-        """ Returns CaptchaType """
-
-        return CaptchaType(cls.__name__.split("Solution", maxsplit=1)[0])
-
-    @classmethod
-    def get_captcha_class(cls) -> BaseCaptcha:
-        """ Returns appropriate solution class """
-
-        return getattr(
-            importlib.import_module(cls.__module__),
-            cls.__name__.split("Solution", maxsplit=1)[0]
-        )
-
-    def __str__(self):
-        return '\n'.join(str(getattr(self, field.name)) for field in fields(self))
+    get_type: CaptchaType
+    get_captcha_class: BaseCaptcha
 
     def as_dict(self):
         """ Get solution data as Python dictionary """
-        return asdict(self)
+        return self.model_dump()

@@ -43,7 +43,7 @@ class Solver:
         self.api_key = api_key
         self._service = SOLVING_SERVICE[self.service_name].Service(api_key)  # type: ignore
 
-    async def _solve_captcha_async(self, captcha_class, *args, **kwargs):
+    async def _solve_captcha(self, captcha_class, *args, **kwargs):
         proxy = kwargs.pop('proxy') if 'proxy' in kwargs else None
         user_agent = kwargs.pop('user_agent') if 'user_agent' in kwargs else None
         cookies = kwargs.pop('cookies') if 'cookies' in kwargs else None
@@ -75,7 +75,7 @@ class Solver:
         :rtype: unicaps.AsyncSolvedCaptcha
         """
 
-        return await self._solve_captcha_async(ImageCaptcha, image, **kwargs)
+        return await self._solve_captcha(ImageCaptcha, image, **kwargs)
 
     async def solve_text_captcha(self, text: str, **kwargs) -> SolvedCaptcha:  # type: ignore
         r"""Solves text CAPTCHA.
@@ -86,7 +86,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(TextCaptcha, text, **kwargs)
+        return await self._solve_captcha(TextCaptcha, text, **kwargs)
 
     async def solve_recaptcha_v2(self, site_key: str, page_url: str,  # type: ignore
                                  **kwargs) -> SolvedCaptcha:
@@ -104,7 +104,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(RecaptchaV2, site_key, page_url, **kwargs)
+        return await self._solve_captcha(RecaptchaV2, site_key, page_url, **kwargs)
 
     async def solve_recaptcha_v3(self, site_key: str, page_url: str,  # type: ignore
                                  **kwargs) -> SolvedCaptcha:
@@ -122,7 +122,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(RecaptchaV3, site_key, page_url, **kwargs)
+        return await self._solve_captcha(RecaptchaV3, site_key, page_url, **kwargs)
 
     async def solve_hcaptcha(self, site_key: str, page_url: str,  # type: ignore
                              **kwargs) -> SolvedCaptcha:
@@ -138,7 +138,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(HCaptcha, site_key, page_url, **kwargs)
+        return await self._solve_captcha(HCaptcha, site_key, page_url, **kwargs)
 
     async def solve_funcaptcha(self, public_key: str, page_url: str,  # type: ignore
                                **kwargs) -> SolvedCaptcha:
@@ -155,7 +155,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(FunCaptcha, public_key, page_url, **kwargs)
+        return await self._solve_captcha(FunCaptcha, public_key, page_url, **kwargs)
 
     async def solve_keycaptcha(self, page_url: str, user_id: str, session_id: str,   # type: ignore
                                ws_sign: str, ws_sign2: str, **kwargs) -> SolvedCaptcha:
@@ -169,7 +169,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(
+        return await self._solve_captcha(
             KeyCaptcha, page_url, user_id, session_id, ws_sign, ws_sign2, **kwargs
         )
 
@@ -184,7 +184,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(GeeTest, page_url, gt_key, challenge, **kwargs)
+        return await self._solve_captcha(GeeTest, page_url, gt_key, challenge, **kwargs)
 
     async def solve_geetest_v4(self, page_url: str, captcha_id: str,  # type: ignore
                                **kwargs) -> SolvedCaptcha:
@@ -195,7 +195,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(GeeTestV4, page_url, captcha_id, **kwargs)
+        return await self._solve_captcha(GeeTestV4, page_url, captcha_id, **kwargs)
 
     async def solve_capy_puzzle(self, site_key: str, page_url: str,  # type: ignore
                                 **kwargs) -> SolvedCaptcha:
@@ -210,7 +210,7 @@ class Solver:
         :return: :class:`AsyncSolvedCaptcha <AsyncSolvedCaptcha>` object
         :rtype: unicaps.AsyncSolvedCaptcha
         """
-        return await self._solve_captcha_async(CapyPuzzle, site_key, page_url, **kwargs)
+        return await self._solve_captcha(CapyPuzzle, site_key, page_url, **kwargs)
 
     async def create_task(self, captcha: BaseCaptcha) -> CaptchaTask:  # type: ignore
         """Create task to solve CAPTCHA

@@ -1,13 +1,10 @@
 import asyncio
-from dataclasses import dataclass
 from datetime import datetime, timedelta
-from inspect import getmodule
 from timeit import default_timer as timer
-from typing import Dict, Optional, Tuple
 
 from better_proxy import Proxy
 
-from ..transport import StandardHTTPTransport  # type: ignore
+from ..transport import StandardHTTPTransport
 from ..captcha import CaptchaType
 from ..captcha.base import BaseCaptcha, BaseCaptchaSolution
 from ..errors import AnyCaptchaException, SolutionWaitTimeout, SolutionNotReadyYet
@@ -20,44 +17,27 @@ class HTTPService:
 
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self._transport = self._init_transport()
-        self._module = getmodule(self)
-        self._settings = {captcha_type: Settings() for captcha_type in self.supported_captchas}
-        self._post_init()
+        self._transport = StandardHTTPTransport()
 
-    def _init_transport(self):
-        return StandardHTTPTransport()
+        self.supported_captchas: list[CaptchaType] = []
+        self.settings = {captcha_type: Settings() for captcha_type
+                         in self.supported_captchas}
+
+        self._post_init()
 
     def _post_init(self):
         pass
 
     async def _make_request_async(self, request_class, *args):
-        request_class = request_class + "Request"
-        if not hasattr(self._module, request_class):
-            raise AnyCaptchaException(f"{request_class} is not supported by the current service!")
-
-        request = getattr(self._module, request_class)(self)
         return await self._transport.make_request(request, *args)
 
-    @property
-    def supported_captchas(self) -> Tuple[CaptchaType, ...]:
-        """ List of supported captchas """
-
-        captchas = []
-        for captcha_type in CaptchaType:
-            if hasattr(self._module, captcha_type.value + "TaskRequest"):
-                captchas.append(captcha_type)
-        return tuple(captchas)
-
-    @property
-    def settings(self) -> Dict[CaptchaType, 'Settings']:
-        """ Service settings """
-
-        return self._settings
-
-    async def solve_captcha(self, captcha: BaseCaptcha, proxy: str | Proxy = None,
-                            user_agent: Optional[str] = None,
-                            cookies: Optional[Dict[str, str]] = None) -> 'SolvedCaptcha':
+    async def solve_captcha(
+            self,
+            captcha: BaseCaptcha,
+            proxy: str | Proxy = None,
+            user_agent: str = None,
+            cookies: dict[str: str] = None,
+    ) -> 'SolvedCaptcha':
         """ Solves captcha and returns SolvedCaptcha object (async) """
 
         start_time = datetime.now()

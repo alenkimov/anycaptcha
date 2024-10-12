@@ -64,6 +64,4 @@ class StandardHTTPTransport:
 
         return request.process_response(response)
 
-    async def close(self):
-        """ Close connections (async) """
-        await self.session.aclose()
+

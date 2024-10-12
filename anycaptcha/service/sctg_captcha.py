@@ -18,7 +18,7 @@ __all__ = [
 class Service(HTTPService):
     """ Main service class for 2captcha """
 
-    BASE_URL = 'http://api.sctg.xyz'
+    BASE_URL = 'https://api.sctg.xyz'
 
     def _post_init(self):
         """ Init settings """

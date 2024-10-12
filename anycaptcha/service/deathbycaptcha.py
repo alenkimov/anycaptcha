@@ -24,7 +24,7 @@ __all__ = [
 class Service(HTTPService):
     """ Main service class for deathbycaptcha """
 
-    BASE_URL = 'http://api.dbcapi.me/api'
+    BASE_URL = 'https://api.dbcapi.me/api'
 
     def _post_init(self):
         """ Init settings """

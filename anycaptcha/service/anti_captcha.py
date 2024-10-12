@@ -8,7 +8,7 @@ import socket
 from better_proxy import Proxy
 
 from .base import HTTPService
-from ..transport import HTTPRequestJSON  # type: ignore
+from ..transport import HTTPRequestJSON
 from .. import errors
 from ..captcha import CaptchaType
 from ..enums import WorkerLanguage

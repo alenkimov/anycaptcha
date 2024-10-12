@@ -12,7 +12,9 @@ __all__ = [
     'Service', 'CreateTaskRequest', 'GetTaskResultRequest',
     'GetBalanceRequest',
     'RecaptchaV2TaskRequest',
-    'RecaptchaV2SolutionRequest'
+    'RecaptchaV2SolutionRequest',
+    'RecaptchaV3TaskRequest',
+    'RecaptchaV3SolutionRequest'
 ]
 
 
@@ -73,6 +75,7 @@ class CreateTaskRequest(CapMonsterRequest):
             "clientKey": self._service.api_key,
             "task": task_data
         }
+
         return {
             "method": "POST",
             "url": f"{self._service.BASE_URL}/createTask",
@@ -123,25 +126,36 @@ class RecaptchaV2TaskRequest(CreateTaskRequest):
 
         if proxy:
             task.update({
-                "proxyType": proxy.protocol.lower(),
-                "proxyAddress": proxy.host,
-                "proxyPort": proxy.port
+                "proxy": proxy.as_url.split("://")[1]
             })
-            if proxy.login and proxy.password:
-                task.update({
-                    "proxyLogin": proxy.login,
-                    "proxyPassword": proxy.password
-                })
 
         if user_agent:
             task["userAgent"] = user_agent
 
-        if cookies:
-            task["cookies"] = ';'.join([f"{k}={v}" for k, v in cookies.items()])
-
         # Handle optional recaptchaDataSValue if present
         if hasattr(captcha, 'recaptcha_data_s_value') and captcha.recaptcha_data_s_value:
             task["recaptchaDataSValue"] = captcha.recaptcha_data_s_value
+
+        return super().prepare(task_data=task)
+
+
+class RecaptchaV3TaskRequest(CreateTaskRequest):
+    """ reCAPTCHA v3 task request for CapMonster """
+
+    def prepare(self, captcha, proxy: Proxy = None, user_agent: str = None, cookies: dict = None) -> dict:
+        """ Prepare createTask request for ReCaptcha V3 """
+        task = {
+            "type": "RecaptchaV3TaskProxyless",
+            "websiteURL": captcha.page_url,
+            "websiteKey": captcha.site_key,
+        }
+
+        # Handle optional minScore and pageAction
+        if hasattr(captcha, 'min_score') and captcha.min_score is not None:
+            task["minScore"] = captcha.min_score
+
+        if hasattr(captcha, 'page_action') and captcha.page_action:
+            task["pageAction"] = captcha.page_action
 
         return super().prepare(task_data=task)
 
@@ -176,6 +190,28 @@ class GetTaskResultRequest(CapMonsterRequest):
 
 class RecaptchaV2SolutionRequest(GetTaskResultRequest):
     """ reCAPTCHA v2 solution request for CapMonster """
+
+    def parse_response(self, response) -> Dict[str, Any]:
+        response_data = super().parse_response(response)
+
+        if response_data["status"] != "ready":
+            raise errors.SolutionNotReadyYet()
+
+        solution_class = self.source_data['task'].captcha.get_solution_class()
+        solution = solution_class(response_data.get("solution").get("gRecaptchaResponse"))
+
+        if not solution:
+            raise errors.ServiceError("Missing gRecaptchaResponse in solution.")
+
+        return dict(
+            solution=solution,
+            cost=response_data.get("cost"),
+            extra=response_data
+        )
+
+
+class RecaptchaV3SolutionRequest(GetTaskResultRequest):
+    """ reCAPTCHA v3 solution request for CapMonster """
 
     def parse_response(self, response) -> Dict[str, Any]:
         response_data = super().parse_response(response)

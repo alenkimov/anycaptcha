@@ -590,7 +590,7 @@ class HCaptchaTaskRequest(TaskRequest):
 
         request['data'].update(
             captcha.get_optional_data(
-                data=('rqdata', None)
+                rqdata=('data', None)
             )
         )
 

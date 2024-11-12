@@ -256,8 +256,6 @@ class RecaptchaV2SolutionRequest(GetTaskResultRequest):
 
         return dict(
             solution=solution,
-            cost=response_data.get("cost"),
-            extra=response_data
         )
 
 
@@ -278,6 +276,4 @@ class RecaptchaV3SolutionRequest(GetTaskResultRequest):
 
         return dict(
             solution=solution,
-            cost=response_data.get("cost"),
-            extra=response_data
         )

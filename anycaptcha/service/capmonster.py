@@ -235,7 +235,7 @@ class HCaptchaSolutionRequest(GetTaskResultRequest):
             raise errors.ServiceError("Missing gRecaptchaResponse in solution.")
 
         return dict(
-            token=solution,
+            solution=solution,
         )
 
 

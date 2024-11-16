@@ -12,6 +12,7 @@ class HCaptcha(BaseCaptcha):
     page_url: str
     is_invisible: bool = False
     api_domain: Optional[str] = None
+    rqdata: Optional[str] = None
 
 
 @dataclass

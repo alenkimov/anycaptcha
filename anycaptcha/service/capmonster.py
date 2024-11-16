@@ -112,6 +112,37 @@ class GetBalanceRequest(CapMonsterRequest):
         }
 
 
+class HCaptchaTaskRequest(CreateTaskRequest):
+    """ hCaptcha task request for CapMonster """
+
+    def prepare(self, captcha, proxy: Proxy = None, user_agent: str = None, cookies: dict = None) -> dict:
+        """ Prepare createTask request for hCaptcha """
+        task = {
+            "type": "HCaptchaTaskProxyless" if proxy is None else "HCaptchaTask",
+            "websiteURL": captcha.page_url,
+            "websiteKey": captcha.site_key,
+        }
+
+        if proxy:
+            task.update({
+                "proxy": proxy.as_url.split("://")[1]
+            })
+
+        if user_agent:
+            task["userAgent"] = user_agent
+
+        if captcha.is_invisible:
+            task["isInvisible"] = True
+
+        if captcha.rqdata:
+            task["data"] = captcha.rqdata
+
+        if cookies:
+            task["cookies"] = '; '.join(f'{k}={v}' for k, v in cookies.items())
+
+        return super().prepare(task_data=task)
+
+
 class RecaptchaV2TaskRequest(CreateTaskRequest):
     """ reCAPTCHA v2 task request for CapMonster """
 
@@ -188,6 +219,26 @@ class GetTaskResultRequest(CapMonsterRequest):
         )
 
 
+class HCaptchaSolutionRequest(GetTaskResultRequest):
+    """ HCaptcha solution request for CapMonster """
+
+    def parse_response(self, response) -> Dict[str, Any]:
+        response_data = super().parse_response(response)
+
+        if response_data["status"] != "ready":
+            raise errors.SolutionNotReadyYet()
+
+        solution_class = self.source_data['task'].captcha.get_solution_class()
+        solution = solution_class(response_data.get("solution").get("gRecaptchaResponse"))
+
+        if not solution:
+            raise errors.ServiceError("Missing gRecaptchaResponse in solution.")
+
+        return dict(
+            solution=solution,
+        )
+
+
 class RecaptchaV2SolutionRequest(GetTaskResultRequest):
     """ reCAPTCHA v2 solution request for CapMonster """
 
@@ -205,8 +256,6 @@ class RecaptchaV2SolutionRequest(GetTaskResultRequest):
 
         return dict(
             solution=solution,
-            cost=response_data.get("cost"),
-            extra=response_data
         )
 
 
@@ -227,6 +276,4 @@ class RecaptchaV3SolutionRequest(GetTaskResultRequest):
 
         return dict(
             solution=solution,
-            cost=response_data.get("cost"),
-            extra=response_data
         )

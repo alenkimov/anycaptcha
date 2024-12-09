@@ -7,7 +7,6 @@ import httpx
 
 from .base import BaseTransport, BaseRequest
 
-
 HTTP_RETRY_MAX_COUNT = 5  # max retry count in case of http(s) errors
 HTTP_RETRY_BACKOFF_FACTOR = 0.5  # backoff factor for Retry
 HTTP_RETRY_STATUS_FORCELIST = {500, 502, 503, 504}  # status forcelist for Retry
@@ -42,6 +41,24 @@ class StandardHTTPTransport(BaseTransport):
     async def close_async(self):
         """ Close connections (async) """
         await self.session_async.aclose()
+
+
+class MultiPartHTTPTransport(StandardHTTPTransport):
+    async def _make_request_async(self, request_data: Dict) -> httpx.Response:
+        if 'headers' not in request_data:
+            request_data['headers'] = {}
+
+        if request_data['method'] == 'POST':
+            request_data.pop('headers')
+            request_payload = request_data.get('data', {})
+            request_data['files'] = {key: (None, str(value)) for key, value in request_payload.items()}
+
+        response = await self.session_async.request(**request_data)
+
+        if self.settings['handle_http_errors']:
+            response.raise_for_status()
+
+        return response
 
 
 class HTTPRequestJSON(BaseRequest):

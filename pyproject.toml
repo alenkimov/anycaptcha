@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "anycaptcha"
-version = "1.5.3"
+version = "1.5.4"
 description = "All captcha solving services in one lib"
 authors = ["Alen <alen.kimov@gmail.com>"]
 readme = "README.md"
@@ -12,6 +12,7 @@ python = "^3.11"
 better-proxy = ">=1.1"
 pydantic = ">=1"
 httpx = ">=0.22"
+filetype = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24"

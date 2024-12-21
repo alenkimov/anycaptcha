@@ -1,9 +1,10 @@
 import base64
-import imghdr
 import io
 import pathlib
 from dataclasses import dataclass
 from typing import Union, Optional
+
+import filetype
 
 from .base import BaseCaptcha, BaseCaptchaSolution
 from ..enums import CaptchaAlphabet, CaptchaCharType, WorkerLanguage
@@ -53,11 +54,11 @@ class ImageCaptcha(BaseCaptcha):
     def get_image_type(self) -> str:
         """ Get type of image file/data """
 
-        image_type = imghdr.what(None, h=self._image_bytes)
+        kind = filetype.guess(self._image_bytes)
 
-        if not image_type:
+        if not kind:
             raise BadInputDataError("Unable to recognize image type!")
-        return image_type
+        return kind.mime
 
 
 @dataclass

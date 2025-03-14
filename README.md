@@ -57,7 +57,7 @@ async def main():
 
 | Service                                                                     | Image | Text | [reCAPTCHA v2](https://developers.google.com/recaptcha/docs/display) | [reCAPTCHA v3](https://developers.google.com/recaptcha/docs/v3) | [FunCaptcha](https://funcaptcha.com/fc/api/nojs/?pkey=69A21A01-CC7B-B9C6-0F9A-E7FA06677FFC) | [KeyCAPTCHA](https://www.keycaptcha.com/) | [Geetest](https://www.geetest.com/en/demo) | [Geetest v4](https://www.geetest.com/en/demo) | [Capy](https://www.capy.me/) |
 |-----------------------------------------------------------------------------|:-----:|:----:|:--------------------------------------------------------------------:|:---------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|:-----------------------------------------:|:------------------------------------------:|:---------------------------------------------:|:----------------------------:|
-| [capmonster](https://capmonster.cloud)	                                     |   ✅   |  ✅   |                                  ✅                                   |                                ✅                                |                                              ❌                                              |                     ❌                     |                     ✅                      |                       ✅                       |              ❌               |
+| [capmonster](https://capmonster.cloud)	                                     |   ✅   |   ❌   |                                  ✅                                   |                                ✅                                |                                              ❌                                              |                     ❌                     |                     ✅                      |                       ✅                       |              ❌               |
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |   ✅   |  ✅   |                                  ✅                                   |                                ✅                                |                                              ✅                                              |                     ✅                     |                     ✅                      |                       ✅                       |              ✅               |
 | [anti-captcha.com](https://getcaptchasolution.com/tmb2cervod)               |   ✅   |  ❌   |                                  ✅                                   |                                ✅                                |                                              ✅                                              |                     ❌                     |                     ✅                      |                       ✅                       |              ❌               |
 | [azcaptcha.com](https://azcaptcha.com)                                      |   ✅   |  ❌   |                                  ✅                                   |                                ✅                                |                                              ✅                                              |                     ❌                     |                     ❌                      |                       ❌                       |              ❌               |
@@ -83,12 +83,7 @@ For example: "If tomorrow is Saturday, what day is today?".
 
 | Service                                                                     |     Language     |
 |-----------------------------------------------------------------------------|:----------------:|
-| [capmonster](https://capmonster.cloud)	                                     |        ❌         |
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         | English, Russian |
-| [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |        ❌         |
-| [azcaptcha.com](https://azcaptcha.com)                                      |        ❌         |
-| [cap.guru](https://cap.guru/ru)                                             |        ❌         |
-| [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |        ❌         |
 
 ### reCAPTCHA v2
 
@@ -124,7 +119,6 @@ For example: "If tomorrow is Saturday, what day is today?".
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |    ✅    |      ✅      |   ✅   |    ❌    |     ✅      |
 | [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |    ✅    |      ✅      |   ✅   |    ❌    |     ✅      |
 | [azcaptcha.com](https://azcaptcha.com)                                      |    ✅    |      ✅      |   ✅   |    ❌    |     ✅      |
-| [cap.guru](https://cap.guru/ru)                                             |    ❌    |      ❌      |   ❌   |    ❌    |     ❌      |
 | [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |    ✅    |      ❌      |   ✅   |    ❌    |     ❌      |
 
 ### KeyCAPTCHA
@@ -132,10 +126,6 @@ For example: "If tomorrow is Saturday, what day is today?".
 | Service                                                                     | Regular | Proxy | Cookies | User-Agent |
 |-----------------------------------------------------------------------------|:-------:|:-----:|:-------:|:----------:|
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |    ✅    |   ❌   |    ❌    |     ❌      |
-| [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |    ❌    |   ❌   |    ❌    |     ❌      |
-| [azcaptcha.com](https://azcaptcha.com)                                      |    ❌    |   ❌   |    ❌    |     ❌      |
-| [cap.guru](https://cap.guru/ru)                                             |    ❌    |   ❌   |    ❌    |     ❌      |
-| [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |    ❌    |   ❌   |    ❌    |     ❌      |
 
 ### Geetest
 
@@ -144,9 +134,7 @@ For example: "If tomorrow is Saturday, what day is today?".
 | [capmonster](https://capmonster.cloud)	                                     |    ✅    |     ✅      |   ✅    |   ✅   |    ❌    |     ✅      |
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |    ✅    |     ✅      |   ❌    |   ✅   |    ❌    |     ✅      |
 | [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |    ✅    |     ✅      |   ✅    |   ✅   |    ❌    |     ✅      |
-| [azcaptcha.com](https://azcaptcha.com)                                      |    ❌    |     ❌      |   ❌    |   ❌   |    ❌    |     ❌      |
 | [cap.guru](https://captcha.guru/ru)                                         |    ✅    |     ❌      |   ❌    |   ✅   |    ❌    |     ❌      |
-| [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |    ❌    |     ❌      |   ❌    |   ❌   |    ❌    |     ❌      |
 
 ### Geetest v4
 
@@ -155,19 +143,12 @@ For example: "If tomorrow is Saturday, what day is today?".
 | [capmonster](https://capmonster.cloud)	                                     |    ✅    |   ✅   |    ❌    |     ✅      |
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |    ✅    |   ✅   |    ❌    |     ✅      |
 | [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |    ✅    |   ✅   |    ❌    |     ✅      |
-| [azcaptcha.com](https://azcaptcha.com)                                      |    ❌    |   ❌   |    ❌    |     ❌      |
-| [cap.guru](https://cap.guru/ru)                                             |    ❌    |   ❌   |    ❌    |     ❌      |
-| [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |    ❌    |   ❌   |    ❌    |     ❌      |
 
 ### Capy Puzzle
 
 | Service                                                                     | Regular | API server | Proxy | Cookies | User-Agent |
 |-----------------------------------------------------------------------------|:-------:|:----------:|:-----:|:-------:|:----------:|
 | [2captcha.com](http://2captcha.com/?from=12016127)	                         |    ✅    |     ✅      |   ✅   |    ❌    |     ❌      |
-| [anti-captcha.com](http://getcaptchasolution.com/tmb2cervod)                |    ❌    |     ❌      |   ❌   |    ❌    |     ❌      |
-| [azcaptcha.com](https://azcaptcha.com)                                      |    ❌    |     ❌      |   ❌   |    ❌    |     ❌      |
-| [cap.guru](https://cap.guru/ru)                                             |    ❌    |     ❌      |   ❌   |    ❌    |     ❌      |
-| [deathbycaptcha.com](https://deathbycaptcha.com/register?refid=6184199718b) |    ❌    |     ❌      |   ❌   |    ❌    |     ❌      |
 
 ## Supported Proxy types
 

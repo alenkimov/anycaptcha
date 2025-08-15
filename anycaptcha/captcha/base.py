@@ -1,23 +1,9 @@
-import enum
 import importlib
 from abc import ABC
 from dataclasses import asdict, dataclass, fields, MISSING
 from typing import Dict
 
-
-class CaptchaType(enum.Enum):
-    """ Captcha type enumeration """
-
-    IMAGE = "ImageCaptcha"
-    RECAPTCHAV2 = "RecaptchaV2"
-    RECAPTCHAV3 = "RecaptchaV3"
-    TEXT = "TextCaptcha"
-    FUNCAPTCHA = "FunCaptcha"
-    GEETEST = "GeeTest"
-    GEETESTV4 = "GeeTestV4"
-    HCAPTCHA = "HCaptcha"
-    KEYCAPTCHA = "KeyCaptcha"
-    CAPY = "CapyPuzzle"
+from ..enums import CaptchaType
 
 
 @dataclass

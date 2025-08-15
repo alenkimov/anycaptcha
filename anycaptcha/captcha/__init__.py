@@ -9,28 +9,3 @@ from .geetest import GeeTest, GeeTestSolution
 from .geetest_v4 import GeeTestV4, GeeTestV4Solution
 from .capy import CapyPuzzle, CapyPuzzleSolution
 from .base import CaptchaType, BaseCaptchaSolution
-
-__all__ = (
-    'ImageCaptcha',
-    'ImageCaptchaSolution',
-    'TextCaptcha',
-    'TextCaptchaSolution',
-    'RecaptchaV2',
-    'RecaptchaV2Solution',
-    'RecaptchaV3',
-    'RecaptchaV3Solution',
-    'HCaptcha',
-    'HCaptchaSolution',
-    'FunCaptcha',
-    'FunCaptchaSolution',
-    'KeyCaptcha',
-    'KeyCaptchaSolution',
-    'GeeTest',
-    'GeeTestSolution',
-    'GeeTestV4',
-    'GeeTestV4Solution',
-    'CapyPuzzle',
-    'CapyPuzzleSolution',
-    'CaptchaType',
-    'BaseCaptchaSolution',
-)

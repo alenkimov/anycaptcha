@@ -1,5 +1,5 @@
 """
-azcaptcha.com service
+
 """
 from better_proxy import Proxy
 
@@ -7,11 +7,13 @@ from .base import HTTPService
 from .._transport.http_transport import HTTPRequestJSON  # type: ignore
 from .. import errors
 from ..captcha import CaptchaType
-from ..enums import CaptchaAlphabet
 
 __all__ = [
     'Service', 'GetBalanceRequest', 'GetStatusRequest',
-    'ReportGoodRequest', 'ReportBadRequest', 'RecaptchaV2TaskRequest'
+    'ReportGoodRequest', 'ReportBadRequest',
+    'ImageCaptchaTaskRequest', 'ImageCaptchaSolutionRequest',
+    'RecaptchaV2TaskRequest', 'RecaptchaV2SolutionRequest',
+    'RecaptchaV3TaskRequest', 'RecaptchaV3SolutionRequest',
 ]
 
 
@@ -298,3 +300,62 @@ class RecaptchaV2TaskRequest(TaskRequest):
 
 class RecaptchaV2SolutionRequest(SolutionRequest):
     """ reCAPTCHA v2 solution request """
+
+
+class RecaptchaV3TaskRequest(TaskRequest):
+    """ reCAPTCHA v3 task request for CapMonster """
+
+    # pylint: disable=arguments-differ,signature-differs
+    def prepare(self, captcha, proxy: Proxy, user_agent, cookies) -> dict:  # type: ignore
+        """ Prepare request """
+
+        request = super().prepare(
+            captcha=captcha,
+            proxy=proxy,
+            user_agent=user_agent,
+            cookies=cookies
+        )
+
+        request['data'].update(
+            dict(
+                method="userrecaptcha",
+                sitekey=captcha.site_key,
+                pageurl=captcha.page_url,
+                version="v3"
+            )
+        )
+
+        return request
+
+
+class RecaptchaV3SolutionRequest(SolutionRequest):
+    """ reCAPTCHA v2 solution request """
+
+
+class ImageCaptchaTaskRequest(TaskRequest):
+    """ ImageCaptchaTask Request class """
+
+    # pylint: disable=arguments-differ,unused-argument,signature-differs
+    def prepare(self, captcha, proxy, user_agent, cookies) -> dict:  # type: ignore
+        """ Prepare request """
+
+        request = super().prepare(
+            captcha=captcha,
+            proxy=proxy,
+            user_agent=user_agent,
+            cookies=cookies
+        )
+
+        # add required params
+        request['data'].update(
+            dict(
+                method="base64",
+                body=captcha.get_image_base64().decode('ascii')
+            )
+        )
+
+        return request
+
+
+class ImageCaptchaSolutionRequest(SolutionRequest):
+    """ Image CAPTCHA solution request """

@@ -1,13 +1,48 @@
-import enum
+from enum import StrEnum, IntEnum
 
-class CaptchaAlphabet(enum.Enum):
+
+class Service(StrEnum):
+    """CAPTCHA solving service enum"""
+
+    ANTI_CAPTCHA        = "anti-captcha.com"
+    AZCAPTCHA           = "azcaptcha.com"
+    CAPTCHA_GURU        = "cap.guru"
+    CPTCH_NET           = "cptch.net"
+    DEATHBYCAPTCHA      = "deathbycaptcha.com"
+    RUCAPTCHA           = "rucaptcha.com"
+    TWOCAPTCHA          = "2captcha.com"
+    MULTIBOT_CAPTCHA    = "multibot.in"
+    SCTG_CAPTCHA        = "api.sctg.xyz"
+    CAPMONSTER          = "capmonster.cloud"
+    CAPSOLVER           = "capsolver.com"
+
+    def __str__(self):
+        return self.value
+
+
+class CaptchaType(StrEnum):
+    """ Captcha type enumeration """
+
+    IMAGE       = "ImageCaptcha"
+    RECAPTCHAV2 = "RecaptchaV2"
+    RECAPTCHAV3 = "RecaptchaV3"
+    TEXT        = "TextCaptcha"
+    FUNCAPTCHA  = "FunCaptcha"
+    GEETEST     = "GeeTest"
+    GEETESTV4   = "GeeTestV4"
+    HCAPTCHA    = "HCaptcha"
+    KEYCAPTCHA  = "KeyCaptcha"
+    CAPY        = "CapyPuzzle"
+
+
+class CaptchaAlphabet(StrEnum):
     """ Alphabet used in the CAPTCHA """
 
     LATIN = 'latin'
     CYRILLIC = 'cyrillic'
 
 
-class CaptchaCharType(enum.Enum):
+class CaptchaCharType(IntEnum):
     """ Character types used in CAPTCHA """
 
     NUMERIC = 1
@@ -16,7 +51,7 @@ class CaptchaCharType(enum.Enum):
     ALPHANUMERIC = 4
 
 
-class WorkerLanguage(enum.Enum):
+class WorkerLanguage(StrEnum):
     """ Worker's language to solve the CAPTCHA """
 
     ENGLISH = 'en'

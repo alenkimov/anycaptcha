@@ -33,6 +33,11 @@ Supports 9 CAPTCHA solving services:
 - [capsolver.com](https://dashboard.capsolver.com/passport/register?inviteCode=m-aE3NeBGZLU)
 - [multibot.in](https://multibot.in)
 
+## TODO
+- _post_init используется только для net настройки капч и транспорта - от него нужно избавиться и сделать настройку более прозрачной
+- вместо if elif в parse_response должнен быть словарь {класс ошибки: {сет из кодов ошибок}}
+- вместо вручную сделанного енама Service и словаря SOLVING_SERVICE это должно автоматом генерится как-то. Например у класса сервиса должно быть поле service_name
+
 ## Example
 
 ```python

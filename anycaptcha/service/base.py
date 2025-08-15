@@ -23,7 +23,7 @@ class BaseService(ABC):
         self.api_key = api_key
         self._transport = self._init_transport()
         self._module = getmodule(self)
-        self._settings = {captcha_type: Settings() for captcha_type in self.supported_captchas}
+        self._settings = {captcha_type: CaptchaNetSettings() for captcha_type in self.supported_captchas}
         self._post_init()
 
     @abstractmethod
@@ -52,7 +52,7 @@ class BaseService(ABC):
         return tuple(captchas)
 
     @property
-    def settings(self) -> Dict[CaptchaType, 'Settings']:
+    def settings(self) -> Dict[CaptchaType, 'CaptchaNetSettings']:
         """ Service settings """
 
         return self._settings
@@ -176,7 +176,7 @@ class HTTPService(BaseService):
 
 
 @dataclass
-class Settings:
+class CaptchaNetSettings:
     """ Service settings """
 
     polling_delay: int = 5  # seconds before starting to check for sollution

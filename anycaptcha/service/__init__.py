@@ -1,4 +1,5 @@
-import enum
+from ..enums import Service
+
 from . import (
     anti_captcha,
     azcaptcha,
@@ -12,25 +13,6 @@ from . import (
     capmonster,
     capsolver
 )
-
-
-class Service(enum.Enum):
-    """CAPTCHA solving service enum"""
-
-    ANTI_CAPTCHA        = "anti-captcha.com"
-    AZCAPTCHA           = "azcaptcha.com"
-    CAPTCHA_GURU        = "cap.guru"
-    CPTCH_NET           = "cptch.net"
-    DEATHBYCAPTCHA      = "deathbycaptcha.com"
-    RUCAPTCHA           = "rucaptcha.com"
-    TWOCAPTCHA          = "2captcha.com"
-    MULTIBOT_CAPTCHA    = "multibot.in"
-    SCTG_CAPTCHA        = "api.sctg.xyz"
-    CAPMONSTER          = "capmonster.cloud"
-    CAPSOLVER           = "capsolver.com"
-
-    def __str__(self):
-        return self.value
 
 
 # supported CAPTCHA solving services

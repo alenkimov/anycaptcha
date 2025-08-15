@@ -11,7 +11,8 @@ from .captcha import (
 )
 from .captcha.base import BaseCaptcha
 from .service.base import SolvedCaptcha, CaptchaTask
-from .service import Service, SOLVING_SERVICE
+from .service import SOLVING_SERVICE
+from .enums import Service
 
 
 class Solver:
